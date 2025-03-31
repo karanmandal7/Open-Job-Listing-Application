@@ -78,8 +78,8 @@ const AddJob = () => {
 
               <Formik onSubmit={onSubmitHandler} validationSchema={validationSchema} initialValues={initialStates}>
                 {({values,setFieldValue})=>(
+
                 <Form className="py-4">
-                
                   <div className="mb-3">
                   <Field name="title" className="w-full py-2 border rounded px-3 outline-none" placeholder="Enter Job Title" />
                   <ErrorMessage name="title" component="p" className="text-red-500 text-xs" />
