@@ -3,37 +3,45 @@ import { toast } from "react-toastify";
 import { axiosClient } from "../utils/utils";
 import LoaderComponent from "../components/LoaderComponent";
 
- const jobContext = createContext({
-    jobs:[],
-    fetchAllJobs:()=>{}
-})
-export const useJobContext = ()=>useContext(jobContext)
+const jobContext = createContext({
+    jobs: [],
+    fetchAllJobs: () => {}
+});
 
-export const JobContextProvider = ({children})=>{
-    const [loader,setLoader] = useState(true)
-    const [jobs,setJobs] = useState([])
-    const fetchAllJobs = async ()=>{
-      try{
-        const response = await axiosClient.get("/jobs")
-        const data = await response.data
-        setJobs(data)
-      } catch (error){
-        toast.error(error.message)
-      }finally{
-        setLoader(false)
-      }
+export const useJobContext = () => useContext(jobContext);
+
+export const JobContextProvider = ({ children }) => {
+    const [loader, setLoader] = useState(true);
+    const [jobs, setJobs] = useState([]);
+
+    const fetchAllJobs = async () => {
+        try {
+            const response = await axiosClient.get("/jobs");
+            const data = await response.data;
+            setJobs(data);
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setLoader(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAllJobs();
+    }, []);
+
+    if (loader) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4 animate-fadeIn">
+                <LoaderComponent />
+                <p className="text-gray-600 text-lg font-medium">Fetching jobs...</p>
+            </div>
+        );
     }
-    useEffect(()=>{
-      fetchAllJobs()
-    },[])
 
-    if(loader){
-        return <div className="min-h-screen flex items-center justify-center">
-            <LoaderComponent/>
-        </div>
-    }
-
-    return <jobContext.Provider value={{jobs,fetchAllJobs}}>
-        {children}
-    </jobContext.Provider>
-}
+    return (
+        <jobContext.Provider value={{ jobs, fetchAllJobs }}>
+            {children}
+        </jobContext.Provider>
+    );
+};
